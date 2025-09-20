@@ -14,14 +14,15 @@ func init() {
 }
 func setupFlags() {
 	flag.StringVar(&config.Host, "host", "0.0.0.0", "host for redis server")
-	flag.StringVar(&config.Port, "port", "6379", "host for redis server")
+	flag.IntVar(&config.Port, "port", 7379, "host for redis server")
 	flag.Parse()
 }
 
 func main() {
 	setupFlags()
 	fmt.Println("Starting db....")
-	server.RunSyncTcpServer()
+	err := server.RunAsyncTcpServer()
+	fmt.Println(err)
 	// out, _ := core.Decode([]byte("*-1\r\n"))
 	// fmt.Println(out)
 
