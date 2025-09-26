@@ -6,6 +6,8 @@ import (
 	"log"
 )
 
+var RESPNIL = []byte("$-1\r\n")
+
 func DecodeAll(data []byte) (interface{}, int, error) {
 
 	switch data[0] {
@@ -126,6 +128,9 @@ func Encode(data interface{}, isSimple bool) []byte {
 			return []byte(fmt.Sprintf("+%s\r\n", v))
 		}
 		return []byte(fmt.Sprintf("$%d\r\n%s\r\n", len(v), v))
+	case int64:
+		return []byte(fmt.Sprintf(":%d\r\n", v))
+
 	}
 
 	return []byte{}

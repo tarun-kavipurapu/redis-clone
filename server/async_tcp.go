@@ -36,7 +36,7 @@ func Listen(ip string, port int) (*Socket, error) {
 	copy(sockAddr.Addr[:], net.ParseIP(ip))
 	err = syscall.Bind(s.socketFd, sockAddr)
 	if err != nil {
-		return nil, fmt.Errorf("error binding address with socket")
+		return nil, fmt.Errorf("error binding address with socket %v", err)
 	}
 	err = syscall.Listen(s.socketFd, syscall.SOMAXCONN)
 	if err != nil {
