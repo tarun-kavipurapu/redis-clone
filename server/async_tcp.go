@@ -60,6 +60,7 @@ func registerKqueue(socket *Socket, kfd int) error {
 func eventLoop(socket *Socket, kfd int) {
 	events := make([]syscall.Kevent_t, 2500)
 	for {
+		//This is a blocking call till any event is sent by the kqueue
 		n, err := syscall.Kevent(kfd, nil, events, nil)
 		if err != nil {
 			log.Printf("Kevent error: %v", err)
