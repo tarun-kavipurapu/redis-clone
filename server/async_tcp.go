@@ -105,21 +105,25 @@ func eventLoop(socket *Socket, kfd int) {
 	}
 }
 func RunAsyncTcpServer() error {
+	//Create a socket to Listen for incoming TCP connections
 	socket, err := Listen(config.Host, config.Port)
 	if err != nil {
 		return err
 	}
 	fmt.Println("I am here")
 	defer syscall.Close(socket.socketFd)
+	//create a kqueue
 	kfd, err := syscall.Kqueue()
 	if err != nil {
 		return err
 	}
+	//register the sockets to kqueue
 	err = registerKqueue(socket, kfd)
 	if err != nil {
 		return err
 	}
 	fmt.Println("Server started")
+	//long polling on kqueue to receive notifications on i/o events
 	eventLoop(socket, kfd)
 	return nil
 }
