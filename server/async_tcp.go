@@ -7,7 +7,12 @@ import (
 	"redis-clone/config"
 	"redis-clone/core"
 	"syscall"
+	"time"
 )
+
+// redis uses interuppts  to run Active Deletion
+var cronFrequency time.Duration = 1 * time.Second
+var lastCronExecTime time.Time = time.Now()
 
 /*
 eventloop -->continously listenes if we are getting any events that we can listen to.
@@ -60,6 +65,10 @@ func registerKqueue(socket *Socket, kfd int) error {
 func eventLoop(socket *Socket, kfd int) {
 	events := make([]syscall.Kevent_t, 2500)
 	for {
+		if time.Now().After(lastCronExecTime.Add(cronFrequency)) {
+			core.DeleteExpiredKeys()
+			lastCronExecTime = time.Now()
+		}
 		//This is a blocking call till any event is sent by the kqueue
 		n, err := syscall.Kevent(kfd, nil, events, nil)
 		if err != nil {
